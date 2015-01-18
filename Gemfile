@@ -1,5 +1,5 @@
-source "http://gems.dev"
 source "https://rubygems.org"
+source "http://gems.pow"
 
 # Declare your gem's dependencies in support_segment.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
