@@ -1,0 +1,3 @@
+class Bar < Foo
+
+end

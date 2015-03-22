@@ -9,9 +9,7 @@ describe SupportSegment::MethodDecorator do
     allow_any_instance_of(dummy_class).to receive(:a_method)
 
     dummy_class
-  end    
-
-
+  end
 
   it ".before" do
     canary = Proc.new {}

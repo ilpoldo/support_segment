@@ -19,35 +19,72 @@ module SupportSegment
 
     module ClassMethods
 
+
       def select_options
         descendants.map{ |c| c.to_s }.sort
       end
 
+      def sti_helpers_base
+        true
+      end
+
       def inherited(child)
+        super
+        base = sti_base_class
+
+
         child.instance_eval do
+          def self.sti_helpers_base
+            false
+          end
+
           def model_name
-            sti_base_class.model_name
+            base.model_name
           end
         end
-        super
+
+        base.define_singleton_method :"#{child.name.to_s.demodulize.underscore.pluralize}" do
+          where(inheritance_column.to_sym => child.name)
+        end
+
       end
 
       def sti_base_class
-        if "#{self.superclass.name}" == "ActiveRecord::Base"
+        # TODO: use the included hook to set the sti_base_class class?
+        if self.sti_helpers_base
           return self
         end
         return superclass.sti_base_class
       end
 
+      def implied_inheritance_class(*inheritance_type_sources)
+        if scope_values = self.current_scope.try(:where_values_hash)
+          inheritance_type_sources << scope_values
+        end
+
+        valid_sources = inheritance_type_sources.select do |source|
+          source.is_a? Hash
+        end
+
+        inheritance_type = valid_sources.inject(nil) do |type, values|
+           type ? type : values.with_indifferent_access[inheritance_column]
+        end
+
+        inheritance_type
+      end
+
       # !! with the first conditional clause type logic will only apply to base class
       #     this MAY not be what you'd want, in which case ommit.
       def new(*a, &b)
-        if (self == sti_base_class) and (h = a.first).is_a? Hash and (type = h[:type] || h['type']) and (klass = type.constantize) != self
-          raise "wtF hax!!"  unless klass < self  # klass should be a descendant of us
-          return klass.new(*a, &b)
+        if (self == sti_base_class) \
+        and (subclass_name = implied_inheritance_class(a.first)) \
+        and (subclass = subclass_name.safe_constantize) != self
+          raise "wtF hax!!"  unless subclass < self  # klass should be a descendant of us
+          return subclass.new(*a, &b)
         end
         super(*a, &b)
       end
+
     end
 
     module InstanceMethods

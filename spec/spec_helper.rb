@@ -1,5 +1,10 @@
 ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+
+silence_stream STDOUT do
+  load File.expand_path("../dummy/db/schema.rb",  __FILE__)
+end
+
 require 'rspec/rails'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
