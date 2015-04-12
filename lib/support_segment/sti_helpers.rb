@@ -28,6 +28,10 @@ module SupportSegment
         true
       end
 
+      def sti_association_extensions
+        @sti_association_extensions ||= Module.new
+      end
+
       def inherited(child)
         super
         base = sti_base_class
@@ -39,12 +43,24 @@ module SupportSegment
           end
 
           def model_name
-            base.model_name
+            sti_base_class.model_name
           end
         end
 
-        base.define_singleton_method :"#{child.name.to_s.demodulize.underscore.pluralize}" do
+        method_name = :"#{child.name.to_s.demodulize.underscore.pluralize}"
+
+        base.define_singleton_method method_name do
           where(inheritance_column.to_sym => child.name)
+        end
+
+        sti_association_extensions.send :define_method, method_name do
+          relation = where(inheritance_column.to_sym => child.name)
+          relation.define_singleton_method :build do |*args, &block|
+            result = super(*args, &block)
+            proxy_association.add_to_target(result)
+          end
+          
+          relation
         end
 
       end
@@ -94,4 +110,5 @@ module SupportSegment
     end
 
   end
+
 end
