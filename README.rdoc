@@ -1,3 +1,5 @@
 = SupportSegment
 
+Loose collection of extra functionality for rails apps
+
 This project rocks and uses MIT-LICENSE.
