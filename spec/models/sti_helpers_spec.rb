@@ -14,15 +14,9 @@ describe SupportSegment::StiHelpers do
   end
 
   it "scopes preserving the association proxy" do
-
     new_foo = Foo.new(something: 'foo')
-    binding.pry
-    #TODO: cannot get the association proxy through the scope!
+
     bazaar = new_foo.bazs.bazaars.build(factor: 2)
-    # Could add custom build methods on the association instead
-    # bazaar = new_foo.bazs.build_bazaar(factor: 2)
-
-
     expect(bazaar).to be_in(new_foo.bazs)
   end
 
