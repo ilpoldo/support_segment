@@ -1,6 +1,4 @@
 require 'support_segment/mobile_detect'
-require 'mime/type'
-
 
 module SupportSegment
   class Railtie < Rails::Railtie
