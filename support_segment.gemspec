@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = SupportSegment::VERSION
   s.authors     = ["Leandro Pedroni"]
   s.email       = ["ilpoldo@gmail.com"]
-  s.homepage    = "http://leandropedroni.com"
-  s.summary     = "Support modules for rails apps."
-  s.description = "Support modules for rails apps."
+  s.homepage    = "https://github.com/ilpoldo/support_segment"
+  s.summary     = "Support modules for rails applications."
+  s.description = "Support modules for rails applications."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
